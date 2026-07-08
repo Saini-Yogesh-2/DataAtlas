@@ -1,0 +1,438 @@
+/* ==========================================================================
+   DataAtlas Core Design System - Vanilla CSS Variables & Reset
+   ========================================================================== */
+
+/* Dark Mode as Default (Root class controls toggles) */
+:root {
+  /* Common System Core Colors */
+  --color-blue: #3b82f6;
+  --color-blue-dark: #1d4ed8;
+  --color-blue-light: rgba(59, 130, 246, 0.1);
+  --color-emerald: #10b981;
+  --color-emerald-light: rgba(16, 185, 129, 0.1);
+  --color-rose: #ef4444;
+  --color-rose-light: rgba(239, 68, 68, 0.1);
+  --color-amber: #f59e0b;
+  --color-amber-light: rgba(245, 158, 11, 0.1);
+  --color-violet: #8b5cf6;
+  --color-purple: #a855f7;
+
+  /* Typography */
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-title: 'Outfit', var(--font-sans);
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Layout Constants */
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 72px;
+  --header-height: 64px;
+}
+
+/* Dark Theme Variables */
+html.dark {
+  --color-bg: #09090b;
+  --color-card: #0c0c0f;
+  --color-card-hover: #14141a;
+  --color-border: #1e1e24;
+  --color-border-hover: #2d2d35;
+  --color-text: #fafafa;
+  --color-text-muted: #8e8e9f;
+  --color-input: #121217;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.5);
+  --scroll-thumb: #2d2d35;
+  --scroll-track: #09090b;
+}
+
+/* Light Theme Variables */
+html:not(.dark) {
+  --color-bg: #f4f4f5;
+  --color-card: #ffffff;
+  --color-card-hover: #fafafa;
+  --color-border: #e4e4e7;
+  --color-border-hover: #d4d4d8;
+  --color-text: #09090b;
+  --color-text-muted: #71717a;
+  --color-input: #ffffff;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --scroll-thumb: #d4d4d8;
+  --scroll-track: #f4f4f5;
+}
+
+/* Reset and Global Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  line-height: 1.5;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-title);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+code, pre {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scroll-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scroll-thumb);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-blue);
+}
+
+/* Helper utility animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.animate-fade {
+  animation: fadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.animate-pulse {
+  animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Standardized layouts and cards */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.card {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s, border-color 0.2s;
+}
+
+.card-hoverable:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  background-color: var(--color-card-hover);
+  border-color: var(--color-border-hover);
+}
+
+/* Forms & Buttons Design Tokens */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.btn-primary {
+  background-color: var(--color-blue);
+  color: #ffffff;
+}
+.btn-primary:hover {
+  background-color: var(--color-blue-dark);
+}
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: var(--color-card);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+.btn-secondary:hover {
+  background-color: var(--color-card-hover);
+  border-color: var(--color-border-hover);
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: var(--color-text-muted);
+}
+.btn-ghost:hover {
+  color: var(--color-text);
+  background-color: var(--color-border);
+}
+
+.input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-input);
+  color: var(--color-text);
+  outline: none;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.input:focus {
+  border-color: var(--color-blue);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.2;
+}
+.badge-blue { background-color: var(--color-blue-light); color: var(--color-blue); }
+.badge-emerald { background-color: var(--color-emerald-light); color: var(--color-emerald); }
+.badge-rose { background-color: var(--color-rose-light); color: var(--color-rose); }
+.badge-amber { background-color: var(--color-amber-light); color: var(--color-amber); }
+
+/* ==========================================================================
+   React Flow Custom Theming (Medallion Lineage)
+   ========================================================================== */
+.react-flow__renderer {
+  background-color: var(--color-bg) !important;
+}
+
+.react-flow__edge-path {
+  stroke: var(--color-border) !important;
+  stroke-width: 2px !important;
+  transition: stroke 0.3s, stroke-width 0.3s;
+}
+
+.react-flow__edge.active .react-flow__edge-path {
+  stroke: var(--color-blue) !important;
+  stroke-width: 3px !important;
+}
+
+.react-flow__controls {
+  box-shadow: var(--shadow-md) !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+  border: 1px solid var(--color-border) !important;
+}
+
+.react-flow__controls-button {
+  background-color: var(--color-card) !important;
+  color: var(--color-text) !important;
+  border-bottom: 1px solid var(--color-border) !important;
+  fill: var(--color-text) !important;
+}
+
+.react-flow__controls-button:hover {
+  background-color: var(--color-card-hover) !important;
+}
+
+/* ==========================================================================
+   Responsive Grid System
+   ========================================================================== */
+.catalog-grid {
+  display: grid;
+  grid-template-columns: minmax(180px, 260px) minmax(160px, 220px) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+  min-width: 0;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.impact-grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.explorer-grid-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.search-grid {
+  display: grid;
+  grid-template-columns: minmax(180px, 220px) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.dashboard-charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.table-row-hover {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.table-row-hover:hover {
+  background-color: var(--color-card-hover) !important;
+}
+
+/* Media Query Overrides */
+@media (max-width: 1024px) {
+  .catalog-grid {
+    grid-template-columns: 1fr 1fr; /* Stack into 2 columns on tablet */
+  }
+  
+  .catalog-grid > div:last-child {
+    grid-column: span 2; /* Span tables across full width below selectors */
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .explorer-grid-split {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .catalog-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .catalog-grid > div:last-child {
+    grid-column: span 1;
+  }
+
+  .impact-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .search-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   Lineage Responsive Layout Classes
+   ========================================================================== */
+.lineage-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  /* header(56px) + breadcrumbs(~32px) + page padding(48px) + page title(~90px) */
+  height: calc(100vh - 226px);
+  min-height: 500px;
+  position: relative;
+}
+
+.lineage-viewport-wrapper {
+  flex: 1;
+  display: flex;
+  position: relative;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: var(--color-bg);
+  min-height: 550px;
+}
+
+.lineage-canvas-container {
+  flex: 1;
+  height: 100%;
+}
+
+.lineage-drawer {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  bottom: 16px;
+  width: 320px;
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  z-index: 10;
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .lineage-container {
+    height: auto !important;
+  }
+
+  .lineage-viewport-wrapper {
+    flex-direction: column;
+    height: auto;
+    min-height: auto;
+  }
+
+  .lineage-canvas-container {
+    height: 400px !important;
+    flex: none;
+  }
+
+  .lineage-drawer {
+    position: static;
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+    margin-top: 1rem;
+  }
+}
+
+

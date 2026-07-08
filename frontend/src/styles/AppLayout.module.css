@@ -1,0 +1,336 @@
+.wrapper {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  transition: padding-left 0.2s ease;
+}
+
+/* Sidebar Styling */
+.sidebar {
+  width: var(--sidebar-width);
+  background-color: var(--color-card);
+  border-right: 1px solid var(--color-border);
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebarCollapsed {
+  width: var(--sidebar-collapsed-width);
+}
+
+.sidebarHeader {
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  padding: 0 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+  gap: 0.75rem;
+}
+
+.logoIcon {
+  color: var(--color-blue);
+  flex-shrink: 0;
+}
+
+.logoText {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--color-text);
+  white-space: nowrap;
+  opacity: 1;
+  transition: opacity 0.15s ease;
+}
+
+.logoTextHidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.sidebarNav {
+  flex: 1;
+  padding: 1rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  overflow-y: auto;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.75rem;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.navItem:hover {
+  color: var(--color-text);
+  background-color: var(--color-card-hover);
+}
+
+.navItemActive {
+  color: #ffffff;
+  background-color: var(--color-blue);
+}
+.navItemActive:hover {
+  background-color: var(--color-blue-dark);
+}
+
+.navLabel {
+  white-space: nowrap;
+  opacity: 1;
+  transition: opacity 0.15s ease;
+}
+
+.navLabelHidden {
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+}
+
+.sidebarFooter {
+  padding: 1rem 0.75rem;
+  border-top: 1px solid var(--color-border);
+}
+
+/* Header/Toolbar styling */
+.main {
+  flex: 1;
+  padding-left: var(--sidebar-width);
+  transition: padding-left 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-width: 0;         /* Prevents flex child from overflowing */
+  overflow-x: hidden;   /* Clips any content wider than viewport */
+}
+
+.mainShifted {
+  padding-left: var(--sidebar-collapsed-width);
+}
+
+.header {
+  height: var(--header-height);
+  background-color: var(--color-card);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 90;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.menuBtn {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  border-radius: 4px;
+}
+.menuBtn:hover {
+  color: var(--color-text);
+  background-color: var(--color-card-hover);
+}
+
+/* Hidden on desktop when sidebar is expanded */
+.menuBtnHidden {
+  display: none;
+}
+
+/* Collapse toggle button inside sidebar header */
+.sidebarCollapseBtn {
+  margin-left: auto;
+  opacity: 0.6;
+}
+.sidebarCollapseBtn:hover {
+  opacity: 1;
+}
+
+.searchBar {
+  display: flex;
+  align-items: center;
+  background-color: var(--color-input);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 0.375rem 0.75rem;
+  width: 280px;
+  gap: 0.5rem;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+.searchBar:hover {
+  border-color: var(--color-border-hover);
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.badge {
+  background-color: var(--color-blue-light);
+  color: var(--color-blue);
+  font-size: 0.75rem;
+  padding: 0.25rem 0.625rem;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.badgeSimulation {
+  background-color: var(--color-amber-light);
+  color: var(--color-amber);
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.profile:hover {
+  background-color: var(--color-card-hover);
+}
+
+.avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: var(--color-blue);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.content {
+  flex: 1;
+  padding: 1.5rem;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: visible;
+}
+
+/* Breadcrumbs */
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.breadcrumbLink {
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+.breadcrumbLink:hover {
+  color: var(--color-text);
+}
+
+.breadcrumbActive {
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+/* Mobile backdrop */
+.mobileBackdrop {
+  display: none;
+}
+
+/* ==========================================================================
+   Mobile Responsiveness & Breakpoints
+   ========================================================================== */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+    width: var(--sidebar-width) !important;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .sidebarMobileOpen {
+    transform: translateX(0) !important;
+  }
+
+  .sidebarCollapsed {
+    transform: translateX(-100%) !important;
+  }
+
+  .main, .mainShifted {
+    padding-left: 0 !important;
+  }
+
+  .searchBar {
+    display: none !important;
+  }
+
+  .header {
+    padding: 0 1rem;
+  }
+
+  .headerRight {
+    gap: 0.5rem;
+  }
+
+  .profile span {
+    display: none !important;
+  }
+
+  /* Always show hamburger on mobile regardless of collapsed state */
+  .menuBtnHidden {
+    display: flex !important;
+  }
+
+  /* Hide sidebar collapse button on mobile */
+  .sidebarCollapseBtn {
+    display: none !important;
+  }
+
+  .mobileBackdrop {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(2px);
+    z-index: 95;
+  }
+}
