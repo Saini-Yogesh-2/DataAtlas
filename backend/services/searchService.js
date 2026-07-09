@@ -36,21 +36,39 @@ export class SearchService {
       const allCats = await CatalogService.getCatalogs(config);
       catalogs = allCats;
 
-      for (const cat of allCats) {
+      const results = await limitConcurrency(allCats, 5, async (cat) => {
         try {
           const catSchemas = await CatalogService.getSchemas(config, cat.name);
-          catSchemas.forEach(s => {
-            schemas.push({ name: s.name, catalog: cat.name, owner: s.owner, comment: s.comment });
-          });
+          const schemaDetails = catSchemas.map(s => ({
+            name: s.name,
+            catalog: cat.name,
+            owner: s.owner,
+            comment: s.comment
+          }));
 
-          for (const s of catSchemas.slice(0, 3)) {
-            const sTables = await CatalogService.getTables(config, cat.name, s.name);
-            tables.push(...sTables);
-          }
+          const tableTasks = catSchemas.map(async (s) => {
+            try {
+              return await CatalogService.getTables(config, cat.name, s.name);
+            } catch (e) {
+              return [];
+            }
+          });
+          const tableResults = await Promise.all(tableTasks);
+          
+          return {
+            schemas: schemaDetails,
+            tables: tableResults.flat()
+          };
         } catch (e) {
           console.error(`Search: skipping catalog ${cat.name}:`, e.message);
+          return { schemas: [], tables: [] };
         }
-      }
+      });
+
+      results.forEach(res => {
+        schemas.push(...res.schemas);
+        tables.push(...res.tables);
+      });
 
       jobs = await JobService.getJobs(config);
       pipelines = await PipelineService.getPipelines(config);
@@ -146,4 +164,21 @@ export class SearchService {
 
     return results.slice(0, 30);
   }
+}
+
+async function limitConcurrency(items, limit, fn) {
+  const results = [];
+  const executing = [];
+  for (const item of items) {
+    const p = Promise.resolve().then(() => fn(item));
+    results.push(p);
+    if (limit < items.length) {
+      const e = p.then(() => executing.splice(executing.indexOf(e), 1));
+      executing.push(e);
+      if (executing.length >= limit) {
+        await Promise.race(executing);
+      }
+    }
+  }
+  return Promise.all(results);
 }

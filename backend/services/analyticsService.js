@@ -63,19 +63,34 @@ export class AnalyticsService {
     let allSchemas = [];
     let allTables = [];
 
-    for (const cat of catalogs.slice(0, 4)) {
+    const results = await limitConcurrency(catalogs, 5, async (cat) => {
       try {
         const schemas = await CatalogService.getSchemas(config, cat.name);
-        schemas.forEach(s => allSchemas.push({ name: s.name, catalog: cat.name }));
+        const schemaDetails = schemas.map(s => ({ name: s.name, catalog: cat.name }));
 
-        for (const s of schemas.slice(0, 3)) {
-          const tables = await CatalogService.getTables(config, cat.name, s.name);
-          allTables.push(...tables);
-        }
+        const tableTasks = schemas.map(async (s) => {
+          try {
+            return await CatalogService.getTables(config, cat.name, s.name);
+          } catch (e) {
+            return [];
+          }
+        });
+        const tableResults = await Promise.all(tableTasks);
+        
+        return {
+          schemas: schemaDetails,
+          tables: tableResults.flat()
+        };
       } catch (e) {
         console.error(`Skipping schema fetch for catalog ${cat.name}:`, e.message);
+        return { schemas: [], tables: [] };
       }
-    }
+    });
+
+    results.forEach(res => {
+      allSchemas.push(...res.schemas);
+      allTables.push(...res.tables);
+    });
 
     // Estimate table size in bytes using real Delta properties or name hash
     const getTableSize = (t) => {
@@ -209,4 +224,21 @@ export class AnalyticsService {
       recentChanges
     };
   }
+}
+
+async function limitConcurrency(items, limit, fn) {
+  const results = [];
+  const executing = [];
+  for (const item of items) {
+    const p = Promise.resolve().then(() => fn(item));
+    results.push(p);
+    if (limit < items.length) {
+      const e = p.then(() => executing.splice(executing.indexOf(e), 1));
+      executing.push(e);
+      if (executing.length >= limit) {
+        await Promise.race(executing);
+      }
+    }
+  }
+  return Promise.all(results);
 }

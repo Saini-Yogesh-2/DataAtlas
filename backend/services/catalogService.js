@@ -256,19 +256,26 @@ export class CatalogService {
 
     try {
       const catalogs = await this.getCatalogs(config);
-      let allTables = [];
-      for (const cat of catalogs.slice(0, 5)) {
+      
+      const results = await limitConcurrency(catalogs, 5, async (cat) => {
         try {
           const schemas = await this.getSchemas(config, cat.name);
-          for (const s of schemas.slice(0, 4)) {
-            const tables = await this.getTables(config, cat.name, s.name);
-            allTables.push(...tables);
-          }
+          const tableTasks = schemas.map(async (s) => {
+            try {
+              return await this.getTables(config, cat.name, s.name);
+            } catch (e) {
+              return [];
+            }
+          });
+          const tableResults = await Promise.all(tableTasks);
+          return tableResults.flat();
         } catch (e) {
-          // ignore
+          console.error(`getAllTablesMetadata: skipping catalog ${cat.name}:`, e.message);
+          return [];
         }
-      }
-      return allTables;
+      });
+      
+      return results.flat();
     } catch (err) {
       console.error('Error compiling all tables metadata:', err.message);
       return [];
@@ -285,22 +292,47 @@ export class CatalogService {
 
     try {
       const catalogs = await this.getCatalogs(config);
-      let tableNames = [];
-      for (const cat of catalogs.slice(0, 5)) {
+      
+      const results = await limitConcurrency(catalogs, 5, async (cat) => {
         try {
           const schemas = await this.getSchemas(config, cat.name);
-          for (const s of schemas.slice(0, 4)) {
-            const tables = await this.getTables(config, cat.name, s.name);
-            tables.forEach(t => tableNames.push(`${cat.name}.${s.name}.${t.name}`));
-          }
+          const tableTasks = schemas.map(async (s) => {
+            try {
+              const tables = await this.getTables(config, cat.name, s.name);
+              return tables.map(t => `${cat.name}.${s.name}.${t.name}`);
+            } catch (e) {
+              return [];
+            }
+          });
+          const tableResults = await Promise.all(tableTasks);
+          return tableResults.flat();
         } catch (e) {
-          // ignore
+          console.error(`getAllTableNames: skipping catalog ${cat.name}:`, e.message);
+          return [];
         }
-      }
-      return tableNames;
+      });
+      
+      return results.flat();
     } catch (err) {
       console.error('Error compiling all table names:', err.message);
       return [];
     }
   }
+}
+
+async function limitConcurrency(items, limit, fn) {
+  const results = [];
+  const executing = [];
+  for (const item of items) {
+    const p = Promise.resolve().then(() => fn(item));
+    results.push(p);
+    if (limit < items.length) {
+      const e = p.then(() => executing.splice(executing.indexOf(e), 1));
+      executing.push(e);
+      if (executing.length >= limit) {
+        await Promise.race(executing);
+      }
+    }
+  }
+  return Promise.all(results);
 }
